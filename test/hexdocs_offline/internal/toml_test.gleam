@@ -1,5 +1,4 @@
 import gleeunit
-import gleeunit/should
 import hexdocs_offline/config
 import hexdocs_offline/internal/toml
 
@@ -13,35 +12,38 @@ pub fn parse_test() {
     config.default_config()
     |> config.with_include_dev(True)
   let assert Ok(deps) = toml.get_deps(conf)
-  should.equal(deps, [
-    toml.Dependency(name: "gleam_stdlib", version: "0.45.0"),
-    toml.Dependency(name: "glexec", version: "1.0.3"),
-    toml.Dependency(name: "nakai", version: "1.1.1"),
-    toml.Dependency(name: "simplifile", version: "2.2.0"),
-    toml.Dependency(name: "tom", version: "1.1.0"),
-    toml.Dependency(name: "gleeunit", version: "1.2.0"),
-  ])
+  assert deps
+    == [
+      toml.Dependency(name: "child_process", version: "1.2.0"),
+      toml.Dependency(name: "gleam_stdlib", version: "1.0.0"),
+      toml.Dependency(name: "nakai", version: "1.1.2"),
+      toml.Dependency(name: "simplifile", version: "2.4.0"),
+      toml.Dependency(name: "tom", version: "2.0.2"),
+      toml.Dependency(name: "gleeunit", version: "1.10.0"),
+    ]
 
   let conf = config.with_include_dev(conf, False)
   let assert Ok(deps) = toml.get_deps(conf)
-  should.equal(deps, [
-    toml.Dependency(name: "gleam_stdlib", version: "0.45.0"),
-    toml.Dependency(name: "glexec", version: "1.0.3"),
-    toml.Dependency(name: "nakai", version: "1.1.1"),
-    toml.Dependency(name: "simplifile", version: "2.2.0"),
-    toml.Dependency(name: "tom", version: "1.1.0"),
-  ])
+  assert deps
+    == [
+      toml.Dependency(name: "child_process", version: "1.2.0"),
+      toml.Dependency(name: "gleam_stdlib", version: "1.0.0"),
+      toml.Dependency(name: "nakai", version: "1.1.2"),
+      toml.Dependency(name: "simplifile", version: "2.4.0"),
+      toml.Dependency(name: "tom", version: "2.0.2"),
+    ]
 
   let conf =
     conf
     |> config.with_include_dev(True)
     |> config.with_ignore_deps(["gleam_stdlib"])
   let assert Ok(deps) = toml.get_deps(conf)
-  should.equal(deps, [
-    toml.Dependency(name: "glexec", version: "1.0.3"),
-    toml.Dependency(name: "nakai", version: "1.1.1"),
-    toml.Dependency(name: "simplifile", version: "2.2.0"),
-    toml.Dependency(name: "tom", version: "1.1.0"),
-    toml.Dependency(name: "gleeunit", version: "1.2.0"),
-  ])
+  assert deps
+    == [
+      toml.Dependency(name: "child_process", version: "1.2.0"),
+      toml.Dependency(name: "nakai", version: "1.1.2"),
+      toml.Dependency(name: "simplifile", version: "2.4.0"),
+      toml.Dependency(name: "tom", version: "2.0.2"),
+      toml.Dependency(name: "gleeunit", version: "1.10.0"),
+    ]
 }
