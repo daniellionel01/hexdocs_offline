@@ -1,5 +1,5 @@
 name = "hexdocs_offline"
-version = "1.0.7"
+version = "1.0.8"
 
 description = "Downloads an offline version of the hexdocs of your projects dependencies to a local folder"
 licences = ["Apache-2.0"]
@@ -15,5 +15,5 @@ nakai = ">= 1.1.1 and < 2.0.0"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 child_process = ">= 1.2.0 and < 2.0.0"
 
-[dev-dependencies]
+[dev_dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

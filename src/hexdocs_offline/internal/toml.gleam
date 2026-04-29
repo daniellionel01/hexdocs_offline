@@ -63,13 +63,21 @@ pub fn get_deps(conf: Config) -> Result(List(Dependency), DependencyError) {
 
   let deps = case conf.include_dev {
     True -> {
-      let dev_deps =
+      // Support deprecated syntax
+      let dev_deps_deprecated =
         tom.get_table(gleam_parsed, ["dev-dependencies"])
         |> unwrap(dict.new())
         |> filter_local_paths()
         |> dict.keys()
 
+      let dev_deps =
+        tom.get_table(gleam_parsed, ["dev_dependencies"])
+        |> unwrap(dict.new())
+        |> filter_local_paths()
+        |> dict.keys()
+
       list.append(deps, dev_deps)
+      |> list.append(dev_deps_deprecated)
     }
     False -> deps
   }

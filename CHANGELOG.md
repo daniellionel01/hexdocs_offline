@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-04-29
+
+- Support both `dev-dependencies` and `dev_dependencies`.
+
 ## [1.0.7] - 2026-04-29
 
 - Use `gleam_stdlib` v1.
