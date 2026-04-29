@@ -1,5 +1,5 @@
 name = "hexdocs_offline"
-version = "1.0.6"
+version = "1.0.7"
 
 description = "Downloads an offline version of the hexdocs of your projects dependencies to a local folder"
 licences = ["Apache-2.0"]
