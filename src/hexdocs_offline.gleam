@@ -1,8 +1,8 @@
+import child_process
 import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
-import glexec as exec
 import hexdocs_offline/config.{type Config, default_config}
 import hexdocs_offline/internal/toml.{type Dependency}
 import nakai
@@ -25,7 +25,7 @@ pub fn generate(conf: Config) {
 
   io.println("Downloading Docs...")
   let assert Ok(deps_with_paths) = download_docs(deps, [])
-  let assert Ok(_) = ensure_permissions(conf, deps_with_paths)
+  let assert Ok(_) = ensure_permissions(deps_with_paths)
 
   let output = gen_output(conf, deps_with_paths)
   let assert Ok(_) = simplifile.write(to: conf.output_path, contents: output)
@@ -78,18 +78,15 @@ fn download_docs(
 ) -> Result(List(DownloadResult), Nil) {
   case deps {
     [dep, ..rest] -> {
-      let cmd =
-        exec.Shell("mix hex.docs fetch " <> dep.name <> " " <> dep.version)
+      let fetch_result =
+        child_process.shell(
+          "mix hex.docs fetch " <> dep.name <> " " <> dep.version,
+        )
 
-      let result =
-        exec.new() |> exec.with_stdout(exec.StdoutCapture) |> exec.run_sync(cmd)
-      case result {
-        Ok(exec.Output(out)) -> {
-          let assert [exec.Stdout(lines)] = out
-          let assert [line] = lines
-
+      case fetch_result {
+        Ok(stdout) -> {
           let extracted =
-            line
+            stdout
             |> string.trim()
             |> string.split(":")
             |> list.map(string.trim)
@@ -102,7 +99,7 @@ fn download_docs(
             _ -> download_docs(rest, acc)
           }
         }
-        Error(err) -> {
+        Error(_) -> {
           io.println(
             "Could not fetch docs for '"
             <> dep.name
@@ -110,7 +107,6 @@ fn download_docs(
             <> dep.version
             <> ")",
           )
-          io.debug(err)
 
           download_docs(rest, acc)
         }
@@ -121,15 +117,12 @@ fn download_docs(
 }
 
 fn ensure_permissions(
-  conf: Config,
   deps_with_path: List(DownloadResult),
 ) -> Result(Nil, Nil) {
   case deps_with_path {
     [dep, ..rest] -> {
-      let cmd = exec.Shell("chmod -R u+rwX " <> dep.path)
-      let assert Ok(_) = exec.new() |> exec.run_sync(cmd)
-
-      ensure_permissions(conf, rest)
+      let assert Ok(_) = child_process.shell("chmod -R u+rwX " <> dep.path)
+      ensure_permissions(rest)
     }
     [] -> Ok(Nil)
   }
